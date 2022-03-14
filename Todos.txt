@@ -1,5 +1,3 @@
--create "confirmNewTask" button
--create "addNewTask" function
 -create "deleteTask" function
 -create "editTask" function
 -create "deleteTodo" function
