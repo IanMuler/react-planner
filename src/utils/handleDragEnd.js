@@ -9,80 +9,122 @@ export const handleDragEnd = (
   todos,
   setTodos
 ) => {
-  const { destination, source } = result
+  const { destination, source } = result;
   const switchTasks = {
-    'general-tasks': {
+    General: {
       tasks: generalTasks,
-      setTasks: setGeneralTasks
+      setTasks: setGeneralTasks,
     },
-    'daily-tasks': {
+    Daily: {
       tasks: dialyTasks,
-      setTasks: setDialyTasks
+      setTasks: setDialyTasks,
     },
-    'once-tasks': {
+    Once: {
       tasks: onceTasks,
-      setTasks: setOnceTasks
-    }
-  }
+      setTasks: setOnceTasks,
+    },
+  };
   if (!destination) {
-    return
+    return;
   }
   if (
     // same place
     destination.droppableId === source.droppableId &&
     destination.index === source.index
   ) {
-    return
+    return;
   }
   if (
     // same list, different order
     destination.droppableId === source.droppableId &&
     destination.index !== source.index
   ) {
-    if (source.droppableId !== 'todos') {
-      const newTasks = [...switchTasks[source.droppableId].tasks]
-      const [removed] = newTasks.splice(source.index, 1)
-      newTasks.splice(destination.index, 0, removed)
-      switchTasks[source.droppableId].setTasks(newTasks)
+    if (source.droppableId !== "todos") {
+      const newTasks = [...switchTasks[source.droppableId].tasks];
+      const [removed] = newTasks.splice(source.index, 1);
+      newTasks.splice(destination.index, 0, removed);
+      switchTasks[source.droppableId].setTasks(newTasks);
     }
-    if (source.droppableId === 'todos') {
-      const newTodos = [...todos]
-      const [removed] = newTodos.splice(source.index, 1)
-      newTodos.splice(destination.index, 0, removed)
-      setTodos(newTodos)
+    if (source.droppableId === "todos") {
+      const newTodos = [...todos];
+      const [removed] = newTodos.splice(source.index, 1);
+      newTodos.splice(destination.index, 0, removed);
+      setTodos(newTodos);
     }
   }
   if (
-    // tasks lists to todos list
-    destination.droppableId !== source.droppableId &&
-    destination.droppableId === 'todos'
+    // general and order tasks lists to todos list
+    (source.droppableId === "Daily" && destination.droppableId === "todos") ||
+    (source.droppableId === "General" && destination.droppableId === "todos")
   ) {
-    const newTasks = [...switchTasks[source.droppableId].tasks]
-    const [removed] = newTasks.splice(source.index, 1)
-    newTasks.splice(source.index, 0, { ...removed, assigned: true })
-    const newTodos = [...todos]
+    const newTasks = [...switchTasks[source.droppableId].tasks];
+    const [removed] = newTasks.splice(source.index, 1);
+    newTasks.splice(source.index, 0, { ...removed, assigned: true });
+    const newTodos = [...todos];
     newTodos.splice(destination.index, 0, {
       ...removed,
-      id: `${Math.floor(Math.random() * 100000)}`
-    })
-    switchTasks[source.droppableId].setTasks(newTasks)
-    setTodos(newTodos)
+      id: `${Math.floor(Math.random() * 100000)}`,
+    });
+    switchTasks[source.droppableId].setTasks(newTasks);
+    setTodos(newTodos);
   }
   if (
-    // todo lists to general tasks
-    source.droppableId === 'todos' &&
-    destination.droppableId === 'general-tasks'
+    // once tasks lists to todos list
+    source.droppableId === "Once" &&
+    destination.droppableId === "todos"
   ) {
-    const newTasks = [...switchTasks[destination.droppableId].tasks]
-    const newTodos = [...todos]
-    const [removed] = newTodos.splice(source.index, 1)
-
-    const removedTask = newTasks.find((task) => task.text === removed.text)
-    if (removedTask) {
-      newTasks.splice(newTasks.indexOf(removedTask), 1, removed)
-    }
-
-    switchTasks[destination.droppableId].setTasks(newTasks)
-    setTodos(newTodos)
+    const newTasks = [...switchTasks[source.droppableId].tasks];
+    const [removed] = newTasks.splice(source.index, 1);
+    const newTodos = [...todos];
+    newTodos.splice(destination.index, 0, {
+      ...removed,
+      id: `${Math.floor(Math.random() * 100000)}`,
+    });
+    switchTasks[source.droppableId].setTasks(newTasks);
+    setTodos(newTodos);
   }
-}
+  if (
+    // todo lists to general or daily lists
+    (source.droppableId === "todos" && destination.droppableId === "Daily") ||
+    (source.droppableId === "todos" && destination.droppableId === "General")
+  ) {
+    const newTasks = [...switchTasks[destination.droppableId].tasks];
+    const newTodos = [...todos];
+    if (newTodos[source.index].list === destination.droppableId) {
+      const [removed] = newTodos.splice(source.index, 1);
+      const removedTask = newTasks.find((task) => task.text === removed.text);
+      let assigned = false;
+      if (
+        newTodos.some(
+          (task) => task.text === removed.text && task.list === removed.list
+        )
+      ) {
+        assigned = true;
+      }
+      newTasks.splice(newTasks.indexOf(removedTask), 1, {
+        ...removed,
+        assigned,
+      });
+      switchTasks[destination.droppableId].setTasks(newTasks);
+      setTodos(newTodos);
+    } else {
+      alert("That task is from another list");
+    }
+  }
+  if (
+    // todo lists to general or daily lists
+    source.droppableId === "todos" &&
+    destination.droppableId === "Once"
+  ) {
+    const newTasks = [...switchTasks[destination.droppableId].tasks];
+    const newTodos = [...todos];
+    if (newTodos[source.index].list === destination.droppableId) {
+      const [removed] = newTodos.splice(source.index, 1);
+      newTasks.splice(destination.index, 0, removed);
+      switchTasks[destination.droppableId].setTasks(newTasks);
+      setTodos(newTodos);
+    } else {
+      alert("That task is from another list");
+    }
+  }
+};

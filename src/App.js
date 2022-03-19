@@ -1,49 +1,49 @@
-import React, { useEffect } from 'react'
-import { Container, Header, Application, TimeWakeUp } from './style.js'
-import { handleDragEnd } from './utils/handleDragEnd.js'
-import { DragDropContext } from 'react-beautiful-dnd'
-import TodoList from './components/TodoList/index.js'
-import TaskList from './components/TaskList/index.js'
+import React, { useEffect } from "react";
+import { Container, Header, Application, TimeWakeUp } from "./style.js";
+import { handleDragEnd } from "./utils/handleDragEnd.js";
+import { DragDropContext } from "react-beautiful-dnd";
+import TodoList from "./components/TodoList/index.js";
+import TaskList from "./components/TaskList/index.js";
 
-function App () {
+function App() {
   const [todos, setTodos] = React.useState([
     {
-      id: '1',
-      text: 'Wake up',
-      duration: '00:30'
-    }
-  ])
-  const [generalTasks, setGeneralTasks] = React.useState([])
-  const [dialyTasks, setDialyTasks] = React.useState([])
-  const [onceTasks, setOnceTasks] = React.useState([])
+      id: "1",
+      text: "Wake up",
+      duration: "00:30",
+    },
+  ]);
+  const [generalTasks, setGeneralTasks] = React.useState([]);
+  const [dialyTasks, setDialyTasks] = React.useState([]);
+  const [onceTasks, setOnceTasks] = React.useState([]);
 
-  const [wakeUpTime, setWakeUpTime] = React.useState('')
+  const [wakeUpTime, setWakeUpTime] = React.useState("");
 
   useEffect(() => {
-    setWakeUpTime(localStorage.getItem('wakeUpTime') || '09:00')
-    setTodos(JSON.parse(localStorage.getItem('todos')) || todos)
+    setWakeUpTime(localStorage.getItem("wakeUpTime") || "09:00");
+    setTodos(JSON.parse(localStorage.getItem("todos")) || todos);
     setGeneralTasks(
-      JSON.parse(localStorage.getItem('generalTasks')) || generalTasks
-    )
-    setDialyTasks(JSON.parse(localStorage.getItem('dialyTasks')) || dialyTasks)
-    setOnceTasks(JSON.parse(localStorage.getItem('onceTasks')) || onceTasks)
-  }, [])
+      JSON.parse(localStorage.getItem("generalTasks")) || generalTasks
+    );
+    setDialyTasks(JSON.parse(localStorage.getItem("dialyTasks")) || dialyTasks);
+    setOnceTasks(JSON.parse(localStorage.getItem("onceTasks")) || onceTasks);
+  }, []);
 
   useEffect(() => {
-    localStorage.setItem('todos', JSON.stringify(todos))
-  }, [todos])
+    localStorage.setItem("todos", JSON.stringify(todos));
+  }, [todos]);
 
   useEffect(() => {
-    localStorage.setItem('generalTasks', JSON.stringify(generalTasks))
-  }, [generalTasks])
+    localStorage.setItem("generalTasks", JSON.stringify(generalTasks));
+  }, [generalTasks]);
 
   useEffect(() => {
-    localStorage.setItem('dialyTasks', JSON.stringify(dialyTasks))
-  }, [dialyTasks])
+    localStorage.setItem("dialyTasks", JSON.stringify(dialyTasks));
+  }, [dialyTasks]);
 
   useEffect(() => {
-    localStorage.setItem('onceTasks', JSON.stringify(onceTasks))
-  }, [onceTasks])
+    localStorage.setItem("onceTasks", JSON.stringify(onceTasks));
+  }, [onceTasks]);
 
   return (
     <DragDropContext
@@ -58,7 +58,7 @@ function App () {
           setOnceTasks,
           todos,
           setTodos
-        )
+        );
       }}
     >
       <Application>
@@ -70,8 +70,8 @@ function App () {
               value={wakeUpTime}
               type="time"
               onChange={(e) => {
-                setWakeUpTime(e.target.value)
-                localStorage.setItem('wakeUpTime', e.target.value)
+                setWakeUpTime(e.target.value);
+                localStorage.setItem("wakeUpTime", e.target.value);
               }}
             />
             <TodoList todos={todos} wakeUpTime={wakeUpTime} />
@@ -87,7 +87,7 @@ function App () {
         </Container>
       </Application>
     </DragDropContext>
-  )
+  );
 }
 
-export default App
+export default App;
