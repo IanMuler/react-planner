@@ -12,12 +12,18 @@ import {
   TaskItemDuration,
   Title,
   CreateTaskInput,
+  OptionsTask,
+  EditIcon,
+  DeleteIcon,
 } from "./style";
 
 const TaskList = ({ title, tasks, setTasks }) => {
   const [isCreatingTask, setIsCreatingTask] = React.useState(false);
+  const [isEditingTask, setIsEditingTask] = React.useState(false);
   const [taskName, setTaskName] = React.useState("");
   const [taskDuration, setTaskDuration] = React.useState("00:30");
+  const [taskId, setTaskId] = React.useState(null);
+  const [hoverTask, setHoverTask] = React.useState(false);
 
   const selectOptions = (
     <>
@@ -57,7 +63,7 @@ const TaskList = ({ title, tasks, setTasks }) => {
   );
 
   const createNewTask = (name, duration, title) => {
-    if (name) {
+    if (name.trim()) {
       if (tasks.some((task) => task.text === name)) {
         alert("Task already exists");
       } else {
@@ -68,7 +74,7 @@ const TaskList = ({ title, tasks, setTasks }) => {
           ...tasks,
           {
             id: `${Math.floor(Math.random() * 100000)}`,
-            text: name,
+            text: name.trim(),
             duration,
             list: title,
           },
@@ -77,11 +83,42 @@ const TaskList = ({ title, tasks, setTasks }) => {
     }
   };
 
-  const handlePress = (e) => {
-    if (e.key === "Enter" || e.type === "click") {
-      createNewTask(taskName, taskDuration, title);
+  const handleEditTask = (id) => {
+    setIsEditingTask(true);
+    setTaskName(tasks.find((task) => task.id === id).text);
+    setTaskDuration(tasks.find((task) => task.id === id).duration);
+    setTaskId(id);
+  };
+
+  const editTask = (name, duration, id) => {
+    setIsEditingTask(false);
+    setTaskName("");
+    setTaskDuration("00:30");
+    setTaskId(null);
+    setTasks(
+      tasks.map((task) =>
+        task.id === tasks.find((task) => task.id === id).id
+          ? { ...task, text: name, duration }
+          : task
+      )
+    );
+  };
+
+  const deleteTask = (id) => {
+    if (window.confirm("Are you sure you want to delete this task?")) {
+      setTasks(tasks.filter((task) => task.id !== id));
     }
   };
+
+  const handlePress = (e) => {
+    if ((e.key === "Enter" || e.type === "click") && isCreatingTask) {
+      createNewTask(taskName, taskDuration, title);
+    }
+    if ((e.key === "Enter" || e.type === "click") && isEditingTask) {
+      editTask(taskName, taskDuration, taskId);
+    }
+  };
+
   return (
     <Droppable droppableId={title}>
       {(droppableProvided) => (
@@ -93,16 +130,15 @@ const TaskList = ({ title, tasks, setTasks }) => {
             style={{
               display: "flex",
               justifyContent: "space-between",
-              alignItems: "center",
             }}
           >
             <Title>{title}</Title>
             <CreateTask onClick={() => setIsCreatingTask(!isCreatingTask)}>
               <CreateIcon />
-              <span>Add task</span>
             </CreateTask>
           </div>
-          {isCreatingTask && (
+
+          {(isCreatingTask || isEditingTask) && (
             <CreateTaskItem>
               <CreateTaskInput
                 value={taskName}
@@ -135,8 +171,28 @@ const TaskList = ({ title, tasks, setTasks }) => {
                   ref={draggableProvided.innerRef}
                   {...draggableProvided.dragHandleProps}
                   assigned={task.assigned}
+                  onMouseEnter={() => setHoverTask(true)}
+                  onMouseLeave={() => setHoverTask(false)}
                 >
-                  <TaskItemDuration>{task.duration.slice(1)}</TaskItemDuration>
+                  {hoverTask && (
+                    <OptionsTask>
+                      <EditIcon
+                        onClick={() => {
+                          handleEditTask(task.id);
+                        }}
+                      />
+                      <DeleteIcon
+                        onClick={() => {
+                          deleteTask(task.id);
+                        }}
+                      />
+                    </OptionsTask>
+                  )}
+                  {!hoverTask && (
+                    <TaskItemDuration>
+                      {task.duration.slice(1)}
+                    </TaskItemDuration>
+                  )}
                   {task.text}
                   {draggableProvided.placeholder}
                 </TaskItem>

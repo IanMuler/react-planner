@@ -65,25 +65,35 @@ function App() {
         <Header>Planner</Header>
 
         <Container>
-          <div>
-            <TimeWakeUp
-              value={wakeUpTime}
-              type="time"
-              onChange={(e) => {
-                setWakeUpTime(e.target.value);
-                localStorage.setItem("wakeUpTime", e.target.value);
-              }}
-            />
-            <TodoList todos={todos} wakeUpTime={wakeUpTime} />
-          </div>
-
-          <TaskList
-            title="General"
-            tasks={generalTasks}
-            setTasks={setGeneralTasks}
+          <TimeWakeUp
+            value={wakeUpTime}
+            type="time"
+            onChange={(e) => {
+              setWakeUpTime(e.target.value);
+              localStorage.setItem("wakeUpTime", e.target.value);
+            }}
           />
-          <TaskList title="Daily" tasks={dialyTasks} setTasks={setDialyTasks} />
-          <TaskList title="Once" tasks={onceTasks} setTasks={setOnceTasks} />
+          <div
+            style={{
+              width: "100%",
+              display: "flex",
+              justifyContent: "space-around",
+            }}
+          >
+            <TodoList todos={todos} wakeUpTime={wakeUpTime} />
+
+            <TaskList
+              title="General"
+              tasks={generalTasks}
+              setTasks={setGeneralTasks}
+            />
+            <TaskList
+              title="Daily"
+              tasks={dialyTasks}
+              setTasks={setDialyTasks}
+            />
+            <TaskList title="Once" tasks={onceTasks} setTasks={setOnceTasks} />
+          </div>
         </Container>
       </Application>
     </DragDropContext>
