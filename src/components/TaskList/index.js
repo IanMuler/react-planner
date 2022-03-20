@@ -1,20 +1,15 @@
-/* eslint-disable react/prop-types */
 import React from "react";
 import { Droppable, Draggable } from "react-beautiful-dnd";
+import TaskItem from "./TaskItem";
 import {
   Tasks,
   CreateTask,
   CreateIcon,
-  TaskItem,
   CreateTaskItem,
   CreateTaskItemDuration,
   ConfirmTask,
-  TaskItemDuration,
-  Title,
   CreateTaskInput,
-  OptionsTask,
-  EditIcon,
-  DeleteIcon,
+  Title,
 } from "./style";
 
 const TaskList = ({ title, tasks, setTasks }) => {
@@ -23,7 +18,6 @@ const TaskList = ({ title, tasks, setTasks }) => {
   const [taskName, setTaskName] = React.useState("");
   const [taskDuration, setTaskDuration] = React.useState("00:30");
   const [taskId, setTaskId] = React.useState(null);
-  const [hoverTask, setHoverTask] = React.useState(false);
 
   const selectOptions = (
     <>
@@ -83,7 +77,7 @@ const TaskList = ({ title, tasks, setTasks }) => {
     }
   };
 
-  const handleEditTask = (id) => {
+  const openEditForm = (id) => {
     setIsEditingTask(true);
     setTaskName(tasks.find((task) => task.id === id).text);
     setTaskDuration(tasks.find((task) => task.id === id).duration);
@@ -105,6 +99,12 @@ const TaskList = ({ title, tasks, setTasks }) => {
   };
 
   const deleteTask = (id) => {
+    if (isEditingTask) {
+      setIsEditingTask(false);
+      setTaskName("");
+      setTaskDuration("00:30");
+      setTaskId(null);
+    }
     if (window.confirm("Are you sure you want to delete this task?")) {
       setTasks(tasks.filter((task) => task.id !== id));
     }
@@ -166,36 +166,19 @@ const TaskList = ({ title, tasks, setTasks }) => {
           {tasks.map((task, index) => (
             <Draggable key={task.id} draggableId={task.id} index={index}>
               {(draggableProvided) => (
-                <TaskItem
+                <div
                   {...draggableProvided.draggableProps}
                   ref={draggableProvided.innerRef}
                   {...draggableProvided.dragHandleProps}
-                  assigned={task.assigned}
-                  onMouseEnter={() => setHoverTask(true)}
-                  onMouseLeave={() => setHoverTask(false)}
                 >
-                  {hoverTask && (
-                    <OptionsTask>
-                      <EditIcon
-                        onClick={() => {
-                          handleEditTask(task.id);
-                        }}
-                      />
-                      <DeleteIcon
-                        onClick={() => {
-                          deleteTask(task.id);
-                        }}
-                      />
-                    </OptionsTask>
-                  )}
-                  {!hoverTask && (
-                    <TaskItemDuration>
-                      {task.duration.slice(1)}
-                    </TaskItemDuration>
-                  )}
-                  {task.text}
-                  {draggableProvided.placeholder}
-                </TaskItem>
+                  <TaskItem
+                    task={task}
+                    openEditForm={openEditForm}
+                    deleteTask={deleteTask}
+                  >
+                    {draggableProvided.placeholder}
+                  </TaskItem>
+                </div>
               )}
             </Draggable>
           ))}

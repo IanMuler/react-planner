@@ -1,5 +1,11 @@
 import React, { useEffect } from "react";
-import { Container, Header, Application, TimeWakeUp } from "./style.js";
+import {
+  Container,
+  Header,
+  Application,
+  TimeWakeUp,
+  RefreshIcon,
+} from "./style.js";
 import { handleDragEnd } from "./utils/handleDragEnd.js";
 import { DragDropContext } from "react-beautiful-dnd";
 import TodoList from "./components/TodoList/index.js";
@@ -45,6 +51,38 @@ function App() {
     localStorage.setItem("onceTasks", JSON.stringify(onceTasks));
   }, [onceTasks]);
 
+  // create a function to add assigned: false to each task from task lists
+  const unassignTasks = () => {
+    setGeneralTasks(
+      generalTasks.map((task) => {
+        return { ...task, assigned: false };
+      })
+    );
+    setDialyTasks(
+      dialyTasks.map((task) => {
+        return { ...task, assigned: false };
+      })
+    );
+    setOnceTasks(
+      onceTasks.map((task) => {
+        return { ...task, assigned: false };
+      })
+    );
+  };
+
+  const refreshToDoList = () => {
+    if (window.confirm("Are you sure you want to refresh the To Do List?")) {
+      setTodos([
+        {
+          id: "1",
+          text: "Wake up",
+          duration: "00:30",
+        },
+      ]);
+      unassignTasks();
+    }
+  };
+
   return (
     <DragDropContext
       onDragEnd={(result) => {
@@ -65,19 +103,29 @@ function App() {
         <Header>Planner</Header>
 
         <Container>
-          <TimeWakeUp
-            value={wakeUpTime}
-            type="time"
-            onChange={(e) => {
-              setWakeUpTime(e.target.value);
-              localStorage.setItem("wakeUpTime", e.target.value);
+          <div
+            style={{
+              display: "flex",
+              width: "300px",
+              justifyContent: "space-between",
+              alignItems: "center",
             }}
-          />
+          >
+            <TimeWakeUp
+              value={wakeUpTime}
+              type="time"
+              onChange={(e) => {
+                setWakeUpTime(e.target.value);
+                localStorage.setItem("wakeUpTime", e.target.value);
+              }}
+            />
+            <RefreshIcon onClick={refreshToDoList} />
+          </div>
           <div
             style={{
               width: "100%",
               display: "flex",
-              justifyContent: "space-around",
+              justifyContent: "space-between",
             }}
           >
             <TodoList todos={todos} wakeUpTime={wakeUpTime} />
