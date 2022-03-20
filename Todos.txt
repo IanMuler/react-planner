@@ -1,4 +1,0 @@
--create "restoreTodo" function
--Develop "taskItem" component to make individual states
--Block delete button if task is being edited
-

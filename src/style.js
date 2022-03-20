@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { Refresh } from "@styled-icons/material-sharp";
 
 export const Application = styled.div`
   width: 100%;
@@ -10,7 +11,7 @@ export const Header = styled.h1`
 `;
 
 export const Container = styled.div`
-  padding: 20px;
+  margin: 40px 40px 0 40px;
 `;
 
 export const TimeWakeUp = styled.input`
@@ -18,4 +19,10 @@ export const TimeWakeUp = styled.input`
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 4px;
+`;
+
+export const RefreshIcon = styled(Refresh)`
+  width: 25px;
+  height: 25px;
+  margin-right: 10px;
 `;
