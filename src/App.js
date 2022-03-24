@@ -15,6 +15,7 @@ function App() {
   const [todos, setTodos] = React.useState([
     {
       id: "1",
+      draggableId: "01",
       text: "Wake up",
       duration: "00:30",
     },
@@ -75,6 +76,7 @@ function App() {
       setTodos([
         {
           id: "1",
+          draggableId: "01",
           text: "Wake up",
           duration: "00:30",
         },
@@ -134,13 +136,23 @@ function App() {
               title="General"
               tasks={generalTasks}
               setTasks={setGeneralTasks}
+              todos={todos}
+              setTodos={setTodos}
             />
             <TaskList
               title="Daily"
               tasks={dialyTasks}
               setTasks={setDialyTasks}
+              todos={todos}
+              setTodos={setTodos}
             />
-            <TaskList title="Once" tasks={onceTasks} setTasks={setOnceTasks} />
+            <TaskList
+              title="Once"
+              tasks={onceTasks}
+              setTasks={setOnceTasks}
+              todos={todos}
+              setTodos={setTodos}
+            />
           </div>
         </Container>
       </Application>

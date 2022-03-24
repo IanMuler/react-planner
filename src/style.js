@@ -25,4 +25,5 @@ export const RefreshIcon = styled(Refresh)`
   width: 25px;
   height: 25px;
   margin-right: 10px;
+  cursor: pointer;
 `;

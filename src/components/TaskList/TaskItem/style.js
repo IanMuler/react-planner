@@ -3,7 +3,10 @@ import { Create, Delete } from "@styled-icons/material-sharp";
 
 export const Item = styled.li`
   width: 100%;
-  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: auto;
   text-align: center;
   padding: 0.5rem;
   margin: 10px 0;
@@ -16,9 +19,14 @@ export const Item = styled.li`
 `;
 
 export const ItemDuration = styled.span`
-  float: right;
   width: 50px;
   text-align: center;
+`;
+
+export const ItemText = styled.span`
+  width: calc(100% - 50px);
+  text-align: center;
+  overflow-wrap: break-word;
 `;
 
 export const Options = styled.button`

@@ -63,7 +63,7 @@ export const handleDragEnd = (
     const newTodos = [...todos];
     newTodos.splice(destination.index, 0, {
       ...removed,
-      id: `${Math.floor(Math.random() * 100000)}`,
+      draggableId: `${Math.floor(Math.random() * 100000)}`,
     });
     switchTasks[source.droppableId].setTasks(newTasks);
     setTodos(newTodos);
@@ -78,7 +78,7 @@ export const handleDragEnd = (
     const newTodos = [...todos];
     newTodos.splice(destination.index, 0, {
       ...removed,
-      id: `${Math.floor(Math.random() * 100000)}`,
+      draggableId: `${Math.floor(Math.random() * 100000)}`,
     });
     switchTasks[source.droppableId].setTasks(newTasks);
     setTodos(newTodos);
@@ -112,7 +112,7 @@ export const handleDragEnd = (
     }
   }
   if (
-    // todo lists to general or daily lists
+    // todo lists to once lists
     source.droppableId === "todos" &&
     destination.droppableId === "Once"
   ) {

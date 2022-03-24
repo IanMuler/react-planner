@@ -12,7 +12,7 @@ import {
   Title,
 } from "./style";
 
-const TaskList = ({ title, tasks, setTasks }) => {
+const TaskList = ({ title, tasks, setTasks, todos, setTodos }) => {
   const [isCreatingTask, setIsCreatingTask] = React.useState(false);
   const [isEditingTask, setIsEditingTask] = React.useState(false);
   const [taskName, setTaskName] = React.useState("");
@@ -68,6 +68,7 @@ const TaskList = ({ title, tasks, setTasks }) => {
           ...tasks,
           {
             id: `${Math.floor(Math.random() * 100000)}`,
+            draggableId: `${Math.floor(Math.random() * 100000)}`,
             text: name.trim(),
             duration,
             list: title,
@@ -91,9 +92,12 @@ const TaskList = ({ title, tasks, setTasks }) => {
     setTaskId(null);
     setTasks(
       tasks.map((task) =>
-        task.id === tasks.find((task) => task.id === id).id
-          ? { ...task, text: name, duration }
-          : task
+        task.id === id ? { ...task, text: name, duration } : task
+      )
+    );
+    setTodos(
+      todos.map((todo) =>
+        todo.id === id ? { ...todo, text: name, duration } : todo
       )
     );
   };
@@ -107,6 +111,7 @@ const TaskList = ({ title, tasks, setTasks }) => {
     }
     if (window.confirm("Are you sure you want to delete this task?")) {
       setTasks(tasks.filter((task) => task.id !== id));
+      setTodos(todos.filter((todo) => todo.id !== id));
     }
   };
 
@@ -164,7 +169,11 @@ const TaskList = ({ title, tasks, setTasks }) => {
             </CreateTaskItem>
           )}
           {tasks.map((task, index) => (
-            <Draggable key={task.id} draggableId={task.id} index={index}>
+            <Draggable
+              key={task.id}
+              draggableId={task.draggableId}
+              index={index}
+            >
               {(draggableProvided) => (
                 <div
                   {...draggableProvided.draggableProps}
