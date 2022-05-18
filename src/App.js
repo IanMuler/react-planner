@@ -12,33 +12,11 @@ import TodoList from "./components/TodoList/index.js";
 import TaskList from "./components/TaskList/index.js";
 
 function App() {
-  const [todos, setTodos] = React.useState([
-    {
-      id: "1",
-      draggableId: "01",
-      text: "Wake up",
-      duration: "00:30",
-    },
-  ]);
-  const [generalTasks, setGeneralTasks] = React.useState([]);
-  const [dialyTasks, setDialyTasks] = React.useState([]);
-  const [onceTasks, setOnceTasks] = React.useState([]);
-
   const [wakeUpTime, setWakeUpTime] = React.useState("");
 
   useEffect(() => {
-    setWakeUpTime(localStorage.getItem("wakeUpTime") || "09:00");
-    setTodos(JSON.parse(localStorage.getItem("todos")) || todos);
-    setGeneralTasks(
-      JSON.parse(localStorage.getItem("generalTasks")) || generalTasks
-    );
-    setDialyTasks(JSON.parse(localStorage.getItem("dialyTasks")) || dialyTasks);
-    setOnceTasks(JSON.parse(localStorage.getItem("onceTasks")) || onceTasks);
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem("todos", JSON.stringify(todos));
-  }, [todos]);
+    localStorage.setItem("tasksTodo", JSON.stringify(tasksTodo));
+  }, [tasksTodo]);
 
   useEffect(() => {
     localStorage.setItem("generalTasks", JSON.stringify(generalTasks));
@@ -52,7 +30,6 @@ function App() {
     localStorage.setItem("onceTasks", JSON.stringify(onceTasks));
   }, [onceTasks]);
 
-  // create a function to add assigned: false to each task from task lists
   const unassignTasks = () => {
     setGeneralTasks(
       generalTasks.map((task) => {
@@ -73,7 +50,7 @@ function App() {
 
   const refreshToDoList = () => {
     if (window.confirm("Are you sure you want to refresh the To Do List?")) {
-      setTodos([
+      setTasksTodo([
         {
           id: "1",
           draggableId: "01",
@@ -96,8 +73,8 @@ function App() {
           setDialyTasks,
           onceTasks,
           setOnceTasks,
-          todos,
-          setTodos
+          tasksTodo,
+          setTasksTodo
         );
       }}
     >
@@ -130,29 +107,15 @@ function App() {
               justifyContent: "space-between",
             }}
           >
-            <TodoList todos={todos} wakeUpTime={wakeUpTime} />
+            <TodoList
+              tasks={tasksTodo}
+              setTasks={setTasksTodo}
+              wakeUpTime={wakeUpTime}
+            />
 
-            <TaskList
-              title="General"
-              tasks={generalTasks}
-              setTasks={setGeneralTasks}
-              todos={todos}
-              setTodos={setTodos}
-            />
-            <TaskList
-              title="Daily"
-              tasks={dialyTasks}
-              setTasks={setDialyTasks}
-              todos={todos}
-              setTodos={setTodos}
-            />
-            <TaskList
-              title="Once"
-              tasks={onceTasks}
-              setTasks={setOnceTasks}
-              todos={todos}
-              setTodos={setTodos}
-            />
+            <TaskList title="General" />
+            <TaskList title="Daily" />
+            <TaskList title="Once" />
           </div>
         </Container>
       </Application>

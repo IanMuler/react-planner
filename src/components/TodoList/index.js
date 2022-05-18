@@ -1,57 +1,52 @@
 /* eslint-disable react/prop-types */
 import React, { useEffect } from "react";
 import { Droppable, Draggable } from "react-beautiful-dnd";
-import {
-  Todos,
-  TodosItem,
-  TodosItemStart,
-  TodosItemDuration,
-  TodosText,
-} from "./style";
+import { Todos } from "./style";
+import TodoItem from "./TodoItem";
 import { addTime } from "../../utils/addTime";
 
-const TodoList = ({ todos, wakeUpTime }) => {
-  const [todosTimes, setTodosTimes] = React.useState([]);
-
+const TodoList = ({ tasks, setTasks, wakeUpTime }) => {
   useEffect(() => {
-    setTodosTimes(
-      todos.map((todo, index) =>
-        todos
-          .slice(0, index)
-          .reduce(
-            (acumulator, todo) => addTime(acumulator, todo.duration),
-            wakeUpTime
-          )
-      )
-    );
-  }, [todos, wakeUpTime]);
+    if (tasks.some((task) => !task.start)) {
+      setTasks(
+        tasks.map((task, index) => {
+          return {
+            ...task,
+            start: tasks
+              .slice(0, index)
+              .reduce(
+                (acumulator, task) => addTime(acumulator, task.duration),
+                wakeUpTime
+              ),
+          };
+        })
+      );
+    }
+  }, [tasks, wakeUpTime]);
 
   return (
-    <Droppable droppableId="todos">
+    <Droppable droppableId="tasksTodo">
       {(droppableProvided) => (
         <Todos
           {...droppableProvided.droppableProps}
           ref={droppableProvided.innerRef}
         >
-          {todos.map((todo, index) => (
+          {tasks.map((task, index) => (
             <Draggable
-              key={todo.id}
-              draggableId={todo.draggableId}
+              key={task.id}
+              draggableId={task.draggableId}
               index={index}
             >
               {(draggableProvided) => (
-                <TodosItem
+                <div
                   {...draggableProvided.draggableProps}
                   ref={draggableProvided.innerRef}
                   {...draggableProvided.dragHandleProps}
                 >
-                  <TodosItemStart>{todosTimes[index]}</TodosItemStart>
-                  <TodosText>{todo.text}</TodosText>
-                  <TodosItemDuration>
-                    {todo.duration.slice(1)}
-                  </TodosItemDuration>
-                  {draggableProvided.placeholder}
-                </TodosItem>
+                  <TodoItem task={task}>
+                    {draggableProvided.placeholder}
+                  </TodoItem>
+                </div>
               )}
             </Draggable>
           ))}

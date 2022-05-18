@@ -1,12 +1,5 @@
 import React from "react";
-import {
-  Item,
-  ItemDuration,
-  ItemText,
-  Options,
-  EditIcon,
-  DeleteIcon,
-} from "./style";
+import { Item, Duration, Text, Options, EditIcon, DeleteIcon } from "./style";
 
 const TaskItem = ({ children, task, openEditForm, deleteTask }) => {
   const [hover, setHover] = React.useState(false);
@@ -17,7 +10,7 @@ const TaskItem = ({ children, task, openEditForm, deleteTask }) => {
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
     >
-      <ItemText>{task.text}</ItemText>
+      <Text>{task.text}</Text>
       {hover && (
         <Options>
           <EditIcon
@@ -32,7 +25,7 @@ const TaskItem = ({ children, task, openEditForm, deleteTask }) => {
           />
         </Options>
       )}
-      {!hover && <ItemDuration>{task.duration.slice(1)}</ItemDuration>}
+      {!hover && <Duration>{task.duration.slice(1)}</Duration>}
       {children}
     </Item>
   );

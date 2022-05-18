@@ -18,12 +18,12 @@ export const Item = styled.li`
   opacity: ${(props) => (props.moving ? 0.6 : 1)};
 `;
 
-export const ItemDuration = styled.span`
+export const Duration = styled.span`
   width: 50px;
   text-align: center;
 `;
 
-export const ItemText = styled.span`
+export const Text = styled.span`
   width: calc(100% - 50px);
   text-align: center;
   overflow-wrap: break-word;

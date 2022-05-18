@@ -6,8 +6,8 @@ export const handleDragEnd = (
   setDialyTasks,
   onceTasks,
   setOnceTasks,
-  todos,
-  setTodos
+  tasksTodo,
+  setTasksTodo
 ) => {
   const { destination, source } = result;
   const switchTasks = {
@@ -39,57 +39,61 @@ export const handleDragEnd = (
     destination.droppableId === source.droppableId &&
     destination.index !== source.index
   ) {
-    if (source.droppableId !== "todos") {
+    if (source.droppableId !== "tasksTodo") {
       const newTasks = [...switchTasks[source.droppableId].tasks];
       const [removed] = newTasks.splice(source.index, 1);
       newTasks.splice(destination.index, 0, removed);
       switchTasks[source.droppableId].setTasks(newTasks);
     }
-    if (source.droppableId === "todos") {
-      const newTodos = [...todos];
+    if (source.droppableId === "tasksTodo") {
+      const newTodos = [...tasksTodo];
       const [removed] = newTodos.splice(source.index, 1);
       newTodos.splice(destination.index, 0, removed);
-      setTodos(newTodos);
+      setTasksTodo(newTodos);
     }
   }
   if (
-    // general and order tasks lists to todos list
-    (source.droppableId === "Daily" && destination.droppableId === "todos") ||
-    (source.droppableId === "General" && destination.droppableId === "todos")
+    // general and order tasks lists to tasksTodo list
+    (source.droppableId === "Daily" &&
+      destination.droppableId === "tasksTodo") ||
+    (source.droppableId === "General" &&
+      destination.droppableId === "tasksTodo")
   ) {
     const newTasks = [...switchTasks[source.droppableId].tasks];
     const [removed] = newTasks.splice(source.index, 1);
     newTasks.splice(source.index, 0, { ...removed, assigned: true });
-    const newTodos = [...todos];
+    const newTodos = [...tasksTodo];
     newTodos.splice(destination.index, 0, {
       ...removed,
       draggableId: `${Math.floor(Math.random() * 100000)}`,
     });
     switchTasks[source.droppableId].setTasks(newTasks);
-    setTodos(newTodos);
+    setTasksTodo(newTodos);
   }
   if (
-    // once tasks lists to todos list
+    // once tasks lists to tasksTodo list
     source.droppableId === "Once" &&
-    destination.droppableId === "todos"
+    destination.droppableId === "tasksTodo"
   ) {
     const newTasks = [...switchTasks[source.droppableId].tasks];
     const [removed] = newTasks.splice(source.index, 1);
-    const newTodos = [...todos];
+    const newTodos = [...tasksTodo];
     newTodos.splice(destination.index, 0, {
       ...removed,
       draggableId: `${Math.floor(Math.random() * 100000)}`,
     });
     switchTasks[source.droppableId].setTasks(newTasks);
-    setTodos(newTodos);
+    setTasksTodo(newTodos);
   }
   if (
-    // todo lists to general or daily lists
-    (source.droppableId === "todos" && destination.droppableId === "Daily") ||
-    (source.droppableId === "todos" && destination.droppableId === "General")
+    // task lists to general or daily lists
+    (source.droppableId === "tasksTodo" &&
+      destination.droppableId === "Daily") ||
+    (source.droppableId === "tasksTodo" &&
+      destination.droppableId === "General")
   ) {
     const newTasks = [...switchTasks[destination.droppableId].tasks];
-    const newTodos = [...todos];
+    const newTodos = [...tasksTodo];
     if (newTodos[source.index].list === destination.droppableId) {
       const [removed] = newTodos.splice(source.index, 1);
       const removedTask = newTasks.find((task) => task.text === removed.text);
@@ -106,23 +110,23 @@ export const handleDragEnd = (
         assigned,
       });
       switchTasks[destination.droppableId].setTasks(newTasks);
-      setTodos(newTodos);
+      setTasksTodo(newTodos);
     } else {
       alert("That task is from another list");
     }
   }
   if (
-    // todo lists to once lists
-    source.droppableId === "todos" &&
+    // task lists to once lists
+    source.droppableId === "tasksTodo" &&
     destination.droppableId === "Once"
   ) {
     const newTasks = [...switchTasks[destination.droppableId].tasks];
-    const newTodos = [...todos];
+    const newTodos = [...tasksTodo];
     if (newTodos[source.index].list === destination.droppableId) {
       const [removed] = newTodos.splice(source.index, 1);
       newTasks.splice(destination.index, 0, removed);
       switchTasks[destination.droppableId].setTasks(newTasks);
-      setTodos(newTodos);
+      setTasksTodo(newTodos);
     } else {
       alert("That task is from another list");
     }

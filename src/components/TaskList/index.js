@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Droppable, Draggable } from "react-beautiful-dnd";
 import TaskItem from "./TaskItem";
+import TasksContext from "../../context/Tasks/TasksContext";
 import {
   Tasks,
   CreateTask,
@@ -12,7 +13,9 @@ import {
   Title,
 } from "./style";
 
-const TaskList = ({ title, tasks, setTasks, todos, setTodos }) => {
+const TaskList = ({ title, tasks, setTasks, tasksTodo, setTasksTodo }) => {
+  const TasksContext = useContext(TasksContext);
+
   const [isCreatingTask, setIsCreatingTask] = React.useState(false);
   const [isEditingTask, setIsEditingTask] = React.useState(false);
   const [taskName, setTaskName] = React.useState("");
@@ -95,9 +98,9 @@ const TaskList = ({ title, tasks, setTasks, todos, setTodos }) => {
         task.id === id ? { ...task, text: name, duration } : task
       )
     );
-    setTodos(
-      todos.map((todo) =>
-        todo.id === id ? { ...todo, text: name, duration } : todo
+    setTasksTodo(
+      tasksTodo.map((task) =>
+        task.id === id ? { ...task, text: name, duration } : task
       )
     );
   };
@@ -111,7 +114,7 @@ const TaskList = ({ title, tasks, setTasks, todos, setTodos }) => {
     }
     if (window.confirm("Are you sure you want to delete this task?")) {
       setTasks(tasks.filter((task) => task.id !== id));
-      setTodos(todos.filter((todo) => todo.id !== id));
+      setTasksTodo(tasksTodo.filter((task) => task.id !== id));
     }
   };
 
