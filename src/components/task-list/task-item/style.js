@@ -3,13 +3,12 @@ import { Create, Delete } from "@styled-icons/material-sharp";
 
 export const Item = styled.li`
   width: 100%;
+  height: 35px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: auto;
   text-align: center;
   padding: 0.5rem;
-  margin: 10px 0;
   background-color: ${(props) => (props.assigned ? "#cccccc" : "#e6e4e1")};
   color: ${(props) => (props.assigned ? "#ababab" : "inherit")};
   border-radius: 10px;

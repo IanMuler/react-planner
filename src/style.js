@@ -12,6 +12,7 @@ export const Header = styled.h1`
 
 export const Container = styled.div`
   margin: 40px 40px 0 40px;
+  display: flex;
 `;
 
 export const TimeWakeUp = styled.input`
@@ -26,4 +27,27 @@ export const RefreshIcon = styled(Refresh)`
   height: 25px;
   margin-right: 10px;
   cursor: pointer;
+`;
+
+export const TodoContainer = styled.div`
+  height: 100%;
+  min-width: 300px;
+  max-width: 40%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: column;
+`;
+
+export const TodoOptions = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+export const TasksContainer = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
 `;

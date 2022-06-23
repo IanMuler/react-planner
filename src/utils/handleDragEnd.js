@@ -1,134 +1,89 @@
-export const handleDragEnd = (
-  result,
-  generalTasks,
-  setGeneralTasks,
-  dialyTasks,
-  setDialyTasks,
-  onceTasks,
-  setOnceTasks,
-  tasksTodo,
-  setTasksTodo
-) => {
+import { v4 } from "uuid";
+
+export const handleDragEnd = (result, context) => {
   const { destination, source } = result;
-  const switchTasks = {
-    General: {
-      tasks: generalTasks,
-      setTasks: setGeneralTasks,
-    },
-    Daily: {
-      tasks: dialyTasks,
-      setTasks: setDialyTasks,
-    },
-    Once: {
-      tasks: onceTasks,
-      setTasks: setOnceTasks,
-    },
-  };
+  const { todo, tasks, updateState } = context;
+
   if (!destination) {
     return;
   }
+
+  // same place
   if (
-    // same place
     destination.droppableId === source.droppableId &&
     destination.index === source.index
   ) {
     return;
   }
+
+  // same list, different order
   if (
-    // same list, different order
     destination.droppableId === source.droppableId &&
     destination.index !== source.index
   ) {
-    if (source.droppableId !== "tasksTodo") {
-      const newTasks = [...switchTasks[source.droppableId].tasks];
+    if (source.droppableId === "todo") {
+      const newTasks = [...todo.list];
+      const [removed] = newTasks.splice(source.index, 1);
+      //start must be null to refresh the start generator function
+      newTasks.splice(destination.index, 0, {
+        ...removed,
+        start: null,
+      });
+      updateState({ todo: { list: newTasks } });
+    }
+    if (source.droppableId !== "todo") {
+      const newTasks = [...tasks.lists[source.droppableId]];
       const [removed] = newTasks.splice(source.index, 1);
       newTasks.splice(destination.index, 0, removed);
-      switchTasks[source.droppableId].setTasks(newTasks);
-    }
-    if (source.droppableId === "tasksTodo") {
-      const newTodos = [...tasksTodo];
-      const [removed] = newTodos.splice(source.index, 1);
-      newTodos.splice(destination.index, 0, removed);
-      setTasksTodo(newTodos);
-    }
-  }
-  if (
-    // general and order tasks lists to tasksTodo list
-    (source.droppableId === "Daily" &&
-      destination.droppableId === "tasksTodo") ||
-    (source.droppableId === "General" &&
-      destination.droppableId === "tasksTodo")
-  ) {
-    const newTasks = [...switchTasks[source.droppableId].tasks];
-    const [removed] = newTasks.splice(source.index, 1);
-    newTasks.splice(source.index, 0, { ...removed, assigned: true });
-    const newTodos = [...tasksTodo];
-    newTodos.splice(destination.index, 0, {
-      ...removed,
-      draggableId: `${Math.floor(Math.random() * 100000)}`,
-    });
-    switchTasks[source.droppableId].setTasks(newTasks);
-    setTasksTodo(newTodos);
-  }
-  if (
-    // once tasks lists to tasksTodo list
-    source.droppableId === "Once" &&
-    destination.droppableId === "tasksTodo"
-  ) {
-    const newTasks = [...switchTasks[source.droppableId].tasks];
-    const [removed] = newTasks.splice(source.index, 1);
-    const newTodos = [...tasksTodo];
-    newTodos.splice(destination.index, 0, {
-      ...removed,
-      draggableId: `${Math.floor(Math.random() * 100000)}`,
-    });
-    switchTasks[source.droppableId].setTasks(newTasks);
-    setTasksTodo(newTodos);
-  }
-  if (
-    // task lists to general or daily lists
-    (source.droppableId === "tasksTodo" &&
-      destination.droppableId === "Daily") ||
-    (source.droppableId === "tasksTodo" &&
-      destination.droppableId === "General")
-  ) {
-    const newTasks = [...switchTasks[destination.droppableId].tasks];
-    const newTodos = [...tasksTodo];
-    if (newTodos[source.index].list === destination.droppableId) {
-      const [removed] = newTodos.splice(source.index, 1);
-      const removedTask = newTasks.find((task) => task.text === removed.text);
-      let assigned = false;
-      if (
-        newTodos.some(
-          (task) => task.text === removed.text && task.list === removed.list
-        )
-      ) {
-        assigned = true;
-      }
-      newTasks.splice(newTasks.indexOf(removedTask), 1, {
-        ...removed,
-        assigned,
+      updateState({
+        tasks: {
+          ...tasks,
+          lists: { ...tasks.lists, [source.droppableId]: newTasks },
+        },
       });
-      switchTasks[destination.droppableId].setTasks(newTasks);
-      setTasksTodo(newTodos);
-    } else {
-      alert("That task is from another list");
     }
   }
+
   if (
-    // task lists to once lists
-    source.droppableId === "tasksTodo" &&
-    destination.droppableId === "Once"
+    // tasks lists to todo list
+    source.droppableId !== "todo" &&
+    destination.droppableId === "todo"
   ) {
-    const newTasks = [...switchTasks[destination.droppableId].tasks];
-    const newTodos = [...tasksTodo];
-    if (newTodos[source.index].list === destination.droppableId) {
-      const [removed] = newTodos.splice(source.index, 1);
-      newTasks.splice(destination.index, 0, removed);
-      switchTasks[destination.droppableId].setTasks(newTasks);
-      setTasksTodo(newTodos);
+    const newTasks = [...todo.list];
+    const task = tasks.lists[source.droppableId][source.index];
+    task.once
+      ? tasks.delete(task)
+      : tasks.update({
+          ...task,
+          assigned: true,
+        });
+
+    const { assigned, once, ...rest } = task;
+    newTasks.splice(destination.index, 0, {
+      ...rest,
+      draggableId: `_${v4()}`,
+    });
+
+    updateState({ todo: { list: newTasks } });
+  }
+
+  if (
+    // todo list to tasks list
+    source.droppableId === "todo" &&
+    destination.droppableId !== "todo"
+  ) {
+    const task = todo.list[source.index];
+    if (task.category === destination.droppableId) {
+      if (destination.droppableId === "once") {
+        tasks.add({ ...task, once: true }, destination.droppableId);
+      } else {
+        const onlyExistOne =
+          todo.list.filter((t) => t.id === task.id).length === 1;
+        if (onlyExistOne) tasks.update({ ...task, assigned: false });
+      }
+      todo.delete(task);
     } else {
-      alert("That task is from another list");
+      alert("This task is from another category");
     }
   }
 };
