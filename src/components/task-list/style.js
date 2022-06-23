@@ -9,8 +9,17 @@ import {
 export const Tasks = styled.ul`
   width: 250px;
   list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
   margin: 0 0 auto 20px;
   transition: all 0.2s ease-in-out;
+`;
+
+export const Header = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 `;
 
 export const Title = styled.h2`
@@ -18,19 +27,18 @@ export const Title = styled.h2`
 `;
 
 export const CreateTask = styled.button`
+  width: 30px;
+  height: 30px;
   display: flex;
   justify-content: center;
   align-items: center;
   border: none;
-  border-radius: 20px;
+  border-radius: 50%;
   margin-right: 20px;
   color: #000;
   cursor: pointer;
 `;
-export const CreateIcon = styled(Add)`
-  width: 25px;
-  height: 25px;
-`;
+export const CreateIcon = styled(Add)``;
 
 export const CreateTaskItem = styled.li`
   display: flex;
@@ -38,7 +46,6 @@ export const CreateTaskItem = styled.li`
   width: 85%;
   text-align: center;
   padding: 0.5rem;
-  margin: 10px 0;
   background-color: #f0eeeb;
   border-radius: 10px;
   position: relative;
