@@ -14,7 +14,7 @@ export const Todos = styled.ul`
 
   ${up("md")} {
     li {
-      padding: 1.6rem;
+      padding: 1.2rem;
     }
   }
 `;
