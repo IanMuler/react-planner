@@ -3,14 +3,16 @@ import { Droppable, Draggable } from "react-beautiful-dnd";
 import TaskItem from "./task-item";
 import { Context } from "../../context/state";
 import {
-  Tasks,
+  Container,
   CreateTask,
   CreateIcon,
   CreateTaskItem,
   CreateTaskItemDuration,
   ConfirmTask,
   CreateTaskInput,
+  CreateTaskContainer,
   Title,
+  Tasks,
   Header,
 } from "./style";
 
@@ -23,7 +25,7 @@ const TaskList = ({ category }) => {
   };
 
   const [taskForm, setTaskForm] = React.useState({ ...initialFormState });
-  const { tasks, todo } = useContext(Context);
+  const { tasks, todo, tasksVisible } = useContext(Context);
 
   const selectOptions = [
     "00:00",
@@ -70,13 +72,6 @@ const TaskList = ({ category }) => {
     }
   };
 
-  const handleDelete = (task) => {
-    if (window.confirm("Are you sure you want to delete this task?")) {
-      tasks.delete(task);
-      if (task.assigned) todo.delete(task);
-    }
-  };
-
   const handlePress = (e) => {
     if (e.key === "Enter" || e.type === "click") {
       if (taskForm.text && taskForm.duration) {
@@ -108,7 +103,7 @@ const TaskList = ({ category }) => {
   return (
     <Droppable droppableId={category}>
       {(droppableProvided) => (
-        <Tasks
+        <Container
           {...droppableProvided.droppableProps}
           ref={droppableProvided.innerRef}
         >
@@ -127,58 +122,63 @@ const TaskList = ({ category }) => {
           </Header>
 
           {formVisible && (
-            <CreateTaskItem onKeyPress={handlePress}>
-              <CreateTaskInput
-                value={taskForm.text}
-                type="text"
-                id="name"
-                name="name"
-                autoComplete="off"
-                placeholder="Write a task"
-                onChange={(e) => {
-                  setTaskForm({ ...taskForm, text: e.target.value });
-                }}
-              />
-              <CreateTaskItemDuration
-                value={taskForm.duration}
-                onChange={(e) => {
-                  setTaskForm({ ...taskForm, duration: e.target.value });
-                }}
-              >
-                {selectOptions.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </CreateTaskItemDuration>
-              <ConfirmTask onClick={handlePress} />
-            </CreateTaskItem>
-          )}
-          {tasks.lists[category].map((task, index) => (
-            <Draggable
-              key={task.draggableId}
-              draggableId={task.draggableId}
-              index={index}
-            >
-              {(draggableProvided) => (
-                <div
-                  {...draggableProvided.draggableProps}
-                  ref={draggableProvided.innerRef}
-                  {...draggableProvided.dragHandleProps}
+            <CreateTaskContainer>
+              <CreateTaskItem onKeyPress={handlePress}>
+                <CreateTaskInput
+                  value={taskForm.text}
+                  type="text"
+                  id="name"
+                  name="name"
+                  autoComplete="off"
+                  placeholder="Write a task"
+                  onChange={(e) => {
+                    setTaskForm({ ...taskForm, text: e.target.value });
+                  }}
+                />
+                <CreateTaskItemDuration
+                  value={taskForm.duration}
+                  onChange={(e) => {
+                    setTaskForm({ ...taskForm, duration: e.target.value });
+                  }}
                 >
-                  <TaskItem
-                    task={task}
-                    openForm={openForm}
-                    deleteTask={handleDelete}
+                  {selectOptions.map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </CreateTaskItemDuration>
+              </CreateTaskItem>
+              <ConfirmTask onClick={handlePress} />
+            </CreateTaskContainer>
+          )}
+          <Tasks>
+            {tasks.lists[category].map((task, index) => (
+              <Draggable
+                key={task.draggableId}
+                draggableId={task.draggableId}
+                index={index}
+              >
+                {(draggableProvided, draggableSnapshot) => (
+                  <div
+                    {...draggableProvided.draggableProps}
+                    ref={draggableProvided.innerRef}
+                    {...draggableProvided.dragHandleProps}
                   >
-                    {draggableProvided.placeholder}
-                  </TaskItem>
-                </div>
-              )}
-            </Draggable>
-          ))}
-          {droppableProvided.placeholder}
-        </Tasks>
+                    <TaskItem
+                      task={task}
+                      tasksVisible={tasksVisible}
+                      openForm={openForm}
+                      isDragging={draggableSnapshot.isDragging}
+                    >
+                      {draggableProvided.placeholder}
+                    </TaskItem>
+                  </div>
+                )}
+              </Draggable>
+            ))}
+            {droppableProvided.placeholder}
+          </Tasks>
+        </Container>
       )}
     </Droppable>
   );

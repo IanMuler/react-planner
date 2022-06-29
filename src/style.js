@@ -1,53 +1,101 @@
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
+import { up } from "styled-breakpoints";
 import { Refresh } from "@styled-icons/material-sharp";
+import { ArrowFromRight } from "@styled-icons/boxicons-solid";
+import { theme } from "./theme";
 
 export const Application = styled.div`
-  width: 100%;
-  height: 100vh;
+  padding: 1rem;
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
 `;
 
-export const Header = styled.h1`
-  margin: 10px;
+export const Header = styled.div``;
+
+export const Title = styled.h1`
+  font-size: ${theme.font.size.sm.title};
 `;
 
 export const Container = styled.div`
-  margin: 40px 40px 0 40px;
+  margin-top: 2rem;
+
+  ${up("md")} {
+    padding: 0 4rem;
+    display: flex;
+    gap: 3rem;
+  }
+`;
+
+export const TodoContainer = styled.div`
+  * {
+    font-size: ${theme.font.size.sm.task};
+  }
+
+  ${up("md")} {
+    * {
+      font-size: ${theme.font.size.xl.task};
+    }
+
+    height: 100%;
+    min-width: 25%;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+  }
+`;
+
+export const TodoOptions = styled.div`
   display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+
+  ${up("md")} {
+  }
 `;
 
 export const TimeWakeUp = styled.input`
-  margin: 10px 0;
-  padding: 10px;
+  max-width: 30%;
+  min-width: 100px;
+  padding: 1rem;
   border: 1px solid #ccc;
   border-radius: 4px;
 `;
 
+export const Options = styled.div`
+  height: 40px;
+  display: flex;
+  align-items: space-between;
+  gap: 1rem;
+
+  ${up("md")} {
+    height: 30px;
+  }
+`;
+
+export const ArrowIcon = styled(ArrowFromRight)``;
+
 export const RefreshIcon = styled(Refresh)`
-  width: 25px;
-  height: 25px;
-  margin-right: 10px;
   cursor: pointer;
 `;
 
-export const TodoContainer = styled.div`
-  height: 100%;
-  min-width: 300px;
-  max-width: 40%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-direction: column;
-`;
-
-export const TodoOptions = styled.div`
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
-
 export const TasksContainer = styled.div`
+  position: absolute;
+  top: 0;
+  left: ${(props) => (props.visible ? "0" : "100%")};
+  bottom: 0;
   width: 100%;
-  display: flex;
-  justify-content: space-between;
+  padding: 1rem 2rem;
+  background-color: #f5f5f5;
+  transition: left 0.3s ease-in-out;
+  z-index: 1;
+
+  ${up("md")} {
+    position: static;
+    background-color: transparent;
+    display: flex;
+    justify-content: space-between;
+    padding: 0;
+  }
 `;

@@ -2,19 +2,31 @@ import { addTime } from "./addTime";
 
 export const refreshToDoList = (context) => {
   const { tasks, todo } = context;
-  if (window.confirm("Are you sure you want to refresh the To Do List?")) {
-    Object.keys(tasks.lists).forEach((key) => {
-      tasks.lists[key].forEach((task) => {
-        task.assigned = false;
+  if (todo.list.length > 0) {
+    if (window.confirm("Are you sure you want to refresh the ToDo list?")) {
+      Object.keys(tasks.lists).forEach((key) => {
+        tasks.lists[key].forEach((task) => {
+          task.assigned = false;
+        });
       });
-    });
-    todo.list.forEach((task) => {
-      todo.delete(task);
-    });
+      todo.list.forEach((task) => {
+        todo.delete(task);
+      });
+    }
   }
 };
 
-export const addStartTime = (todo, wakeUpTime) => {
+export const refreshToDo = (task, context) => {
+  const { tasks, todo, isDraggingTodo } = context;
+  if (window.confirm("Are you sure you want to remove this task?")) {
+    todo.delete(task);
+    const onlyExistOne = todo.list.filter((t) => t.id === task.id).length === 1;
+    if (onlyExistOne) tasks.update({ ...task, assigned: false });
+    isDraggingTodo.update(false);
+  }
+};
+
+export const addWakeUpTime = (todo, wakeUpTime) => {
   const list = todo.list;
 
   if (
