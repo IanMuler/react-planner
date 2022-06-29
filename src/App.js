@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState, useContext, useReducer } from "react";
 import {
   Container,
   Header,
@@ -7,23 +7,37 @@ import {
   RefreshIcon,
   TodoContainer,
   TodoOptions,
+  Options,
   TasksContainer,
+  ArrowIcon,
+  Title,
 } from "./style.js";
 import { handleDragEnd } from "./utils/handleDragEnd.js";
 import { DragDropContext } from "react-beautiful-dnd";
 import { refreshToDoList } from "./utils/todo.js";
 import TodoList from "./components/todo-list";
 import TaskList from "./components/task-list";
+import { useSwipe } from "./hooks/useSwipe.js";
 import { Context } from "./context/state";
+import DeleteIcon from "./components/delete-icon";
 
 function App() {
-  const [wakeUpTime, setWakeUpTime] = React.useState("");
-  const context = React.useContext(Context);
+  const context = useContext(Context);
+  const { wakeUpTime, tasksVisible, isDraggingTodo, isDraggingTask } = context;
+  const isDragging = isDraggingTodo.value || isDraggingTask.value;
+  const { onTouchStart, onTouchMove, onTouchEnd } = useSwipe(
+    tasksVisible,
+    isDragging
+  );
+  const [refreshing, setRefreshing] = useState(false);
+  const isDesktop = window.innerWidth > 768;
 
-  const { startTime } = context;
+  useEffect(() => {
+    tasksVisible.update(isDesktop);
+  }, [isDesktop]);
 
   const handleWakeUpTime = (e) => {
-    startTime.update(e.target.value);
+    wakeUpTime.update(e.target.value);
   };
 
   return (
@@ -32,24 +46,40 @@ function App() {
         handleDragEnd(result, context);
       }}
     >
-      <Application>
-        <Header>Planner</Header>
+      <Application
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+      >
+        <Header>
+          <Title>Planner</Title>
+        </Header>
 
         <Container>
           <TodoContainer>
             <TodoOptions>
               <TimeWakeUp
-                value={startTime.value}
+                value={wakeUpTime.value}
                 type="time"
                 onChange={(e) => {
                   handleWakeUpTime(e);
                 }}
               />
-              <RefreshIcon onClick={() => refreshToDoList(context)} />
+              <Options>
+                {!isDesktop && <DeleteIcon isDragging={isDraggingTodo.value} />}
+                <RefreshIcon onClick={() => refreshToDoList(context)} />
+                {!isDesktop && (
+                  <ArrowIcon
+                    onClick={() => {
+                      tasksVisible.update(!tasksVisible.value);
+                    }}
+                  />
+                )}
+              </Options>
             </TodoOptions>
-            <TodoList wakeUpTime={startTime.value} />
+            <TodoList wakeUpTime={wakeUpTime.value} />
           </TodoContainer>
-          <TasksContainer>
+          <TasksContainer visible={tasksVisible.value}>
             <TaskList category="general" />
             <TaskList category="daily" />
             <TaskList category="once" />

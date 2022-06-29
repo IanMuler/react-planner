@@ -7,6 +7,10 @@ import {
   UPDATE_TODO,
   DELETE_TODO,
   UPDATE_START,
+  UPDATE_VISIBLE,
+  UPDATE_DRAGGING_TODO,
+  UPDATE_DRAGGING_TASK,
+  UPDATE_POSITIONS,
   UPDATE_STATE,
 } from "./types";
 import { v4 } from "uuid";
@@ -23,8 +27,17 @@ const initialState = {
   todo: {
     list: [],
   },
-  startTime: {
+  wakeUpTime: {
     value: "",
+  },
+  tasksVisible: {
+    value: false,
+  },
+  isDraggingTodo: {
+    value: false,
+  },
+  isDraggingTask: {
+    value: false,
   },
 };
 
@@ -62,6 +75,12 @@ const Provider = ({ children }) => {
   const updateTodo = (task) => dispatch({ type: UPDATE_TODO, payload: task });
   const deleteTodo = (task) => dispatch({ type: DELETE_TODO, payload: task });
   const updateStart = (time) => dispatch({ type: UPDATE_START, payload: time });
+  const updateVisible = (value) =>
+    dispatch({ type: UPDATE_VISIBLE, payload: value });
+  const updateDraggingToDo = (value) =>
+    dispatch({ type: UPDATE_DRAGGING_TODO, payload: value });
+  const updateDraggingTask = (value) =>
+    dispatch({ type: UPDATE_DRAGGING_TASK, payload: value });
   const updateState = (list) => dispatch({ type: UPDATE_STATE, payload: list });
 
   return (
@@ -79,9 +98,21 @@ const Provider = ({ children }) => {
           delete: deleteTodo,
           update: updateTodo,
         },
-        startTime: {
-          ...state.startTime,
+        wakeUpTime: {
+          ...state.wakeUpTime,
           update: updateStart,
+        },
+        tasksVisible: {
+          ...state.tasksVisible,
+          update: updateVisible,
+        },
+        isDraggingTodo: {
+          ...state.isDraggingTodo,
+          update: updateDraggingToDo,
+        },
+        isDraggingTask: {
+          ...state.isDraggingTask,
+          update: updateDraggingTask,
         },
         updateState,
       }}

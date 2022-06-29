@@ -1,8 +1,9 @@
 import { v4 } from "uuid";
+import { refreshToDo } from "./todo";
 
 export const handleDragEnd = (result, context) => {
   const { destination, source } = result;
-  const { todo, tasks, updateState } = context;
+  const { todo, tasks, updateState, isDraggingTodo } = context;
 
   if (!destination) {
     return;
@@ -14,6 +15,14 @@ export const handleDragEnd = (result, context) => {
     destination.index === source.index
   ) {
     return;
+  }
+
+  if (
+    // todo task to delete icon
+    source.droppableId === "todo" &&
+    destination.droppableId === "delete"
+  ) {
+    return refreshToDo(todo.list[source.index], context);
   }
 
   // same list, different order
@@ -75,13 +84,17 @@ export const handleDragEnd = (result, context) => {
     const task = todo.list[source.index];
     if (task.category === destination.droppableId) {
       if (destination.droppableId === "once") {
-        tasks.add({ ...task, once: true }, destination.droppableId);
+        const { start, ...rest } = task;
+        tasks.add({ ...rest, once: true }, destination.droppableId);
       } else {
         const onlyExistOne =
           todo.list.filter((t) => t.id === task.id).length === 1;
-        if (onlyExistOne) tasks.update({ ...task, assigned: false });
+        const { start, ...rest } = task;
+        if (onlyExistOne) tasks.update({ ...rest, assigned: false });
       }
       todo.delete(task);
+      // force isDraggingTodo to false, react-beautiful-dnd for some reason doesnt update isDragging
+      isDraggingTodo.update(false);
     } else {
       alert("This task is from another category");
     }

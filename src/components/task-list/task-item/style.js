@@ -1,20 +1,27 @@
 import styled from "styled-components";
+import { up } from "styled-breakpoints";
 import { Create, Delete } from "@styled-icons/material-sharp";
+import { theme } from "../../../theme";
 
-export const Item = styled.li`
-  width: 100%;
-  height: 35px;
+export const Container = styled.li`
+  padding-bottom: 1rem;
+`;
+
+export const Item = styled.div`
+  font-size: ${theme.font.size.sm.task};
+  padding: 1.5rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  text-align: center;
-  padding: 0.5rem;
   background-color: ${(props) => (props.assigned ? "#cccccc" : "#e6e4e1")};
   color: ${(props) => (props.assigned ? "#ababab" : "inherit")};
   border-radius: 10px;
-  position: relative;
-  user-select: none;
-  opacity: ${(props) => (props.moving ? 0.6 : 1)};
+
+  ${up("md")} {
+    font-size: ${theme.font.size.xl.task};
+    height: 40px;
+    padding: 0 1rem;
+  }
 `;
 
 export const Duration = styled.span`
@@ -28,20 +35,19 @@ export const Text = styled.span`
   overflow-wrap: break-word;
 `;
 
-export const Options = styled.button`
-  float: right;
+export const Options = styled.div`
   width: 50px;
   display: flex;
   justify-content: center;
   align-items: center;
   border: none;
-  color: #000000bd;
   background: transparent;
-  cursor: pointer;
   gap: 5px;
+
+  > * {
+    cursor: pointer;
+  }
 `;
 
-export const EditIcon = styled(Create)`
-  height: 100%;
-`;
+export const EditIcon = styled(Create)``;
 export const DeleteIcon = styled(Delete)``;

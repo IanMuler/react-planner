@@ -6,7 +6,11 @@ import {
   UPDATE_TODO,
   DELETE_TODO,
   UPDATE_STATE,
+  UPDATE_VISIBLE,
   UPDATE_START,
+  UPDATE_DRAGGING_TODO,
+  UPDATE_DRAGGING_TASK,
+  UPDATE_POSITIONS,
 } from "./types";
 
 export default function reducer(state, action) {
@@ -82,23 +86,54 @@ export default function reducer(state, action) {
         },
       };
     case DELETE_TODO:
+      const list = state.todo.list.filter(
+        (task) =>
+          payload.assigned
+            ? task.id !== payload.id // if is assigned we are deleting the task from tasks lists
+            : task.draggableId !== payload.draggableId // if assigned dont exist the task is at todo list and is necessary delete by draggableId
+      );
+
+      if (list.length > 0) {
+        // at least a start value must be annulled to reassign then
+        list[0].start = null;
+      }
+
       return {
         ...state,
         todo: {
           ...state.todo,
-          list: state.todo.list.filter(
-            (task) =>
-              payload.assigned
-                ? task.id !== payload.id // if is assigned we are deleting the task from tasks lists
-                : task.draggableId !== payload.draggableId // if assigned dont exist the task is at todo list and is necessary delete by draggableId
-          ),
+          list,
         },
       };
     case UPDATE_START:
       return {
         ...state,
-        startTime: {
-          ...state.startTime,
+        wakeUpTime: {
+          ...state.wakeUpTime,
+          value: payload,
+        },
+      };
+    case UPDATE_VISIBLE:
+      return {
+        ...state,
+        tasksVisible: {
+          ...state.tasksVisible,
+          value: payload,
+        },
+      };
+    case UPDATE_DRAGGING_TODO:
+      return {
+        ...state,
+        isDraggingTodo: {
+          ...state.isDraggingTodo,
+          value: payload,
+        },
+      };
+    case UPDATE_DRAGGING_TASK:
+      return {
+        ...state,
+        isDraggingTask: {
+          ...state.isDraggingTask,
           value: payload,
         },
       };

@@ -9,3 +9,7 @@
   -moz-osx-font-smoothing: grayscale;
   user-select: none;
 }
+
+html {
+  font-size: 62.5%;
+}

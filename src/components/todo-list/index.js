@@ -3,14 +3,15 @@ import { Droppable, Draggable } from "react-beautiful-dnd";
 import { Todos, NoItems } from "./style";
 import TodoItem from "./todo-item";
 import { Context } from "../../context/state";
-import { addStartTime } from "../../utils/todo";
+import { addWakeUpTime } from "../../utils/todo";
 
 const TodoList = ({ wakeUpTime }) => {
   const { todo } = React.useContext(Context);
   const { list } = todo;
+  const [refreshing, setRefreshing] = React.useState(false);
 
   useEffect(() => {
-    if (list.length > 0) addStartTime(todo, wakeUpTime);
+    if (list.length > 0) addWakeUpTime(todo, wakeUpTime);
   }, [list, wakeUpTime]);
 
   return (
@@ -26,25 +27,25 @@ const TodoList = ({ wakeUpTime }) => {
                 key={task.draggableId}
                 draggableId={task.draggableId}
                 index={index}
+                isDragDisabled={refreshing}
               >
-                {(draggableProvided) => (
+                {(draggableProvided, draggableSnapshot) => (
                   <div
                     {...draggableProvided.draggableProps}
                     ref={draggableProvided.innerRef}
                     {...draggableProvided.dragHandleProps}
                   >
-                    <TodoItem task={task}>
+                    <TodoItem
+                      task={task}
+                      isDragging={draggableSnapshot.isDragging}
+                    >
                       {draggableProvided.placeholder}
                     </TodoItem>
                   </div>
                 )}
               </Draggable>
             ))}
-          {list.length === 0 && (
-            <NoItems>
-              <span>Drag tasks here</span>
-            </NoItems>
-          )}
+          {list.length === 0 && <NoItems>Drag tasks here</NoItems>}
           {droppableProvided.placeholder}
         </Todos>
       )}
