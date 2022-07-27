@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useReducer } from "react";
+import React, { createContext, useEffect, useState, useReducer } from "react";
 import {
   GET_TASKS,
   ADD_TASK,
@@ -10,11 +10,12 @@ import {
   UPDATE_VISIBLE,
   UPDATE_DRAGGING_TODO,
   UPDATE_DRAGGING_TASK,
-  UPDATE_POSITIONS,
+  UPDATE_LOADING,
   UPDATE_STATE,
 } from "./types";
 import { v4 } from "uuid";
 import reducer from "./reducer";
+import { state as stateDB } from "../api/state";
 
 const initialState = {
   tasks: {
@@ -39,20 +40,52 @@ const initialState = {
   isDraggingTask: {
     value: false,
   },
+  loading: {
+    value: false,
+  },
 };
 
-const actualState = window.localStorage.getItem("state")
-  ? JSON.parse(window.localStorage.getItem("state"))
-  : initialState;
-
-export const Context = createContext(actualState);
+export const Context = createContext(initialState);
 
 const Provider = ({ children }) => {
-  const [state, dispatch] = useReducer(reducer, actualState);
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const [stateId, setStateId] = useState(null);
 
-  // Save state to localStorage
   useEffect(() => {
-    window.localStorage.setItem("state", JSON.stringify(state));
+    const handleState = (data, initialState) => {
+      const stateFromDB = data.body[0].state;
+      if (stateFromDB) {
+        updateState(stateFromDB);
+      } else {
+        updateState(initialState);
+      }
+      setStateId(data.body[0]._id);
+      updateLoading(false);
+    };
+
+    updateLoading(true);
+
+    stateDB
+      .get()
+      .then((data) => {
+        handleState(data);
+      })
+      .catch(() => {
+        stateDB
+          .create(initialState)
+          .then((data) => {
+            handleState(data, initialState);
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      });
+  }, []);
+
+  useEffect(() => {
+    if (stateId) {
+      stateDB.update(stateId, state);
+    }
   }, [state]);
 
   const getTasks = () => dispatch({ type: GET_TASKS, payload: state.tasks });
@@ -81,6 +114,8 @@ const Provider = ({ children }) => {
     dispatch({ type: UPDATE_DRAGGING_TODO, payload: value });
   const updateDraggingTask = (value) =>
     dispatch({ type: UPDATE_DRAGGING_TASK, payload: value });
+  const updateLoading = (value) =>
+    dispatch({ type: UPDATE_LOADING, payload: value });
   const updateState = (list) => dispatch({ type: UPDATE_STATE, payload: list });
 
   return (
@@ -113,6 +148,10 @@ const Provider = ({ children }) => {
         isDraggingTask: {
           ...state.isDraggingTask,
           update: updateDraggingTask,
+        },
+        loading: {
+          ...state.loading,
+          update: updateLoading,
         },
         updateState,
       }}

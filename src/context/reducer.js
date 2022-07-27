@@ -10,7 +10,7 @@ import {
   UPDATE_START,
   UPDATE_DRAGGING_TODO,
   UPDATE_DRAGGING_TASK,
-  UPDATE_POSITIONS,
+  UPDATE_LOADING,
 } from "./types";
 
 export default function reducer(state, action) {
@@ -134,6 +134,14 @@ export default function reducer(state, action) {
         ...state,
         isDraggingTask: {
           ...state.isDraggingTask,
+          value: payload,
+        },
+      };
+    case UPDATE_LOADING:
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
           value: payload,
         },
       };
