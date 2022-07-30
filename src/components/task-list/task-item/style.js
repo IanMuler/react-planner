@@ -36,6 +36,7 @@ export const Text = styled.span`
 `;
 
 export const Options = styled.div`
+  color: #000;
   width: 50px;
   display: flex;
   justify-content: center;

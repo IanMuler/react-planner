@@ -1,4 +1,4 @@
-import styled, { keyframes } from "styled-components";
+import styled, { css } from "styled-components";
 import { up } from "styled-breakpoints";
 import { Refresh } from "@styled-icons/material-sharp";
 import { ArrowFromRight } from "@styled-icons/boxicons-solid";
@@ -90,12 +90,24 @@ export const TasksContainer = styled.div`
   background-color: #f5f5f5;
   transition: left 0.3s ease-in-out;
   z-index: 1;
+  overflow-y: auto;
 
   ${up("md")} {
-    position: static;
-    background-color: transparent;
+    height: 80vh;
     display: flex;
     justify-content: space-between;
+    position: static;
+    background-color: transparent;
     padding: 0;
+  }
+
+  &::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    box-shadow: inset 0 0 8px 8px #bbbbbec7;
+    border: solid 3px transparent;
+    border-radius: 10px;
   }
 `;
